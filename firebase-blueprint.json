@@ -1,0 +1,289 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile in the school system",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "enum": ["admin", "teacher", "student"] },
+        "avatar": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "rollNo": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "classId": { "type": "string" },
+        "subject": { "type": "string" }
+      },
+      "required": ["uid", "email", "name", "role", "createdAt"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string" },
+        "rollNo": { "type": "string" },
+        "classId": { "type": "string" },
+        "parentName": { "type": "string" },
+        "parentContact": { "type": "string" },
+        "address": { "type": "string" },
+        "admissionDate": { "type": "string" },
+        "gender": { "type": "string" },
+        "feeStatus": { "type": "string", "enum": ["paid", "unpaid", "pending"] }
+      },
+      "required": ["id", "name", "email", "rollNo", "classId"]
+    },
+    "Teacher": {
+      "title": "Teacher",
+      "description": "Teacher record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "subject": { "type": "string" },
+        "classTeacherOf": { "type": "string" },
+        "contact": { "type": "string" },
+        "joinDate": { "type": "string" },
+        "gender": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "employeeId", "subject"]
+    },
+    "AttendanceRecord": {
+      "title": "AttendanceRecord",
+      "description": "Daily student attendance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "rollNo": { "type": "string" },
+        "classId": { "type": "string" },
+        "status": { "type": "string", "enum": ["present", "absent", "late"] },
+        "markedBy": { "type": "string" }
+      },
+      "required": ["id", "date", "studentId", "classId", "status"]
+    },
+    "ExamResult": {
+      "title": "ExamResult",
+      "description": "Academic exam result",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "rollNo": { "type": "string" },
+        "classId": { "type": "string" },
+        "subject": { "type": "string" },
+        "examName": { "type": "string" },
+        "marksObtained": { "type": "number" },
+        "maxMarks": { "type": "number" },
+        "grade": { "type": "string" },
+        "remarks": { "type": "string" },
+        "date": { "type": "string" }
+      },
+      "required": ["id", "studentId", "subject", "examName", "marksObtained"]
+    },
+    "Assignment": {
+      "title": "Assignment",
+      "description": "Class assignment task",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "classId": { "type": "string" },
+        "subject": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "teacherName": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "submissionsCount": { "type": "number" }
+      },
+      "required": ["id", "title", "dueDate", "classId", "subject", "teacherId"]
+    },
+    "Submission": {
+      "title": "Submission",
+      "description": "Student assignment submission",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "assignmentId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "submittedAt": { "type": "string" },
+        "submissionText": { "type": "string" },
+        "attachmentUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["submitted", "graded"] },
+        "grade": { "type": "string" },
+        "remarks": { "type": "string" }
+      },
+      "required": ["id", "assignmentId", "studentId", "submittedAt", "status"]
+    },
+    "SchoolNotice": {
+      "title": "SchoolNotice",
+      "description": "Broadcast notice for school community",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "content": { "type": "string" },
+        "date": { "type": "string" },
+        "target": { "type": "string", "enum": ["all", "teachers", "students"] },
+        "author": { "type": "string" },
+        "important": { "type": "boolean" }
+      },
+      "required": ["id", "title", "content", "date", "target"]
+    },
+    "SystemNotification": {
+      "title": "SystemNotification",
+      "description": "System notification message",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "timeAgo": { "type": "string" },
+        "type": { "type": "string", "enum": ["notice", "fee", "grade", "user", "system"] },
+        "role": { "type": "string", "enum": ["all", "admin", "teacher", "student"] },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "title", "content", "type", "role"]
+    },
+    "TimetablePeriod": {
+      "title": "TimetablePeriod",
+      "description": "Class timetable schedule period",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "day": { "type": "string", "enum": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] },
+        "period": { "type": "number" },
+        "time": { "type": "string" },
+        "subject": { "type": "string" },
+        "classId": { "type": "string" },
+        "teacherName": { "type": "string" },
+        "room": { "type": "string" }
+      },
+      "required": ["id", "day", "period", "subject", "classId"]
+    },
+    "FeeTransaction": {
+      "title": "FeeTransaction",
+      "description": "Fee billing transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "rollNo": { "type": "string" },
+        "classId": { "type": "string" },
+        "amount": { "type": "number" },
+        "category": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["paid", "unpaid", "pending"] },
+        "paymentDate": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "invoiceNo": { "type": "string" }
+      },
+      "required": ["id", "studentId", "amount", "category", "status", "invoiceNo"]
+    },
+    "Book": {
+      "title": "Book",
+      "description": "Library book entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "author": { "type": "string" },
+        "isbn": { "type": "string" },
+        "category": { "type": "string" },
+        "quantity": { "type": "number" },
+        "available": { "type": "number" },
+        "location": { "type": "string" }
+      },
+      "required": ["id", "title", "author", "quantity", "available"]
+    },
+    "BookLoan": {
+      "title": "BookLoan",
+      "description": "Library book loan transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "bookId": { "type": "string" },
+        "bookTitle": { "type": "string" },
+        "bookAuthor": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentRollNo": { "type": "string" },
+        "classId": { "type": "string" },
+        "borrowDate": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "returnDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["borrowed", "returned", "overdue"] }
+      },
+      "required": ["id", "bookId", "studentId", "borrowDate", "dueDate", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles"
+    },
+    "/students/{studentId}": {
+      "schema": { "$ref": "#/entities/Student" },
+      "description": "Student roster"
+    },
+    "/teachers/{teacherId}": {
+      "schema": { "$ref": "#/entities/Teacher" },
+      "description": "Teacher roster"
+    },
+    "/attendance/{attendanceId}": {
+      "schema": { "$ref": "#/entities/AttendanceRecord" },
+      "description": "Attendance tracking"
+    },
+    "/results/{resultId}": {
+      "schema": { "$ref": "#/entities/ExamResult" },
+      "description": "Exam marks and results"
+    },
+    "/assignments/{assignmentId}": {
+      "schema": { "$ref": "#/entities/Assignment" },
+      "description": "Class homework assignments"
+    },
+    "/submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/Submission" },
+      "description": "Assignment submissions"
+    },
+    "/notices/{noticeId}": {
+      "schema": { "$ref": "#/entities/SchoolNotice" },
+      "description": "School notice board"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/SystemNotification" },
+      "description": "System push notifications"
+    },
+    "/timetable/{timetableId}": {
+      "schema": { "$ref": "#/entities/TimetablePeriod" },
+      "description": "Class timetables"
+    },
+    "/fees/{feeId}": {
+      "schema": { "$ref": "#/entities/FeeTransaction" },
+      "description": "Student fee records"
+    },
+    "/books/{bookId}": {
+      "schema": { "$ref": "#/entities/Book" },
+      "description": "Library catalog"
+    },
+    "/loans/{loanId}": {
+      "schema": { "$ref": "#/entities/BookLoan" },
+      "description": "Library book loans"
+    }
+  }
+}
