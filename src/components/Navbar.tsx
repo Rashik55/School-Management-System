@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from './ThemeContext';
-import { LogOut, Sun, Moon, Bell, Menu, GraduationCap, Megaphone, DollarSign, Award, User, Trash2, Check } from 'lucide-react';
+import { LogOut, Sun, Moon, Bell, Menu, GraduationCap, Megaphone, Banknote, Award, User, Trash2, Check } from 'lucide-react';
 import { UserProfile, SystemNotification } from '../types';
 import { dbService } from '../services/dbService';
 import { Modal } from './Modal';
@@ -175,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onToggleMobileSi
                   ) : (
                     notifications.map((n) => {
                       const Icon = n.type === 'notice' ? Megaphone
-                                  : n.type === 'fee' ? DollarSign
+                                  : n.type === 'fee' ? Banknote
                                   : n.type === 'grade' ? Award
                                   : n.type === 'user' ? User
                                   : Bell;

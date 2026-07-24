@@ -7,7 +7,7 @@ import { ProfileSettings } from '../../components/ProfileSettings';
 import { LibraryView } from '../../components/LibraryView';
 import { Modal } from '../../components/Modal';
 import { 
-  GraduationCap, ClipboardList, BookOpen, Award, DollarSign, Calendar, Clock,
+  GraduationCap, ClipboardList, BookOpen, Award, Banknote, Calendar, Clock,
   CheckCircle, AlertTriangle, Send, ShieldAlert, CreditCard, ChevronRight, X
 } from 'lucide-react';
 
@@ -178,7 +178,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, onUpda
               </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs">
+            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md transition-all active:scale-[0.98] duration-150">
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Invoice dues</span>
                 <p className="text-3xl font-extrabold text-gray-900 dark:text-white leading-none">
@@ -187,7 +187,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, onUpda
                 <span className="text-[10px] text-amber-500 font-semibold block">Pending fee invoices</span>
               </div>
               <div className="p-4 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 rounded-2xl">
-                <DollarSign className="w-6 h-6" />
+                <Banknote className="w-6 h-6" />
               </div>
             </div>
           </div>
@@ -383,7 +383,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, onUpda
         <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 shadow-xs">
           <div className="flex items-center space-x-2.5 pb-4 border-b border-gray-100 dark:border-gray-800 mb-6">
             <div className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl">
-              <DollarSign className="w-5 h-5" />
+              <Banknote className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Fee Balance & Payments</h3>

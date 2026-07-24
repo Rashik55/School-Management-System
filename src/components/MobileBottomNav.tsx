@@ -4,7 +4,7 @@ import {
   LayoutDashboard, 
   ClipboardList, 
   BookOpen, 
-  DollarSign, 
+  Banknote, 
   Award, 
   Menu,
   Calendar,
@@ -33,7 +33,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           { id: 'dashboard', label: 'Hub', icon: LayoutDashboard },
           { id: 'library', label: 'Library', icon: Library },
           { id: 'attendance', label: 'Attendance', icon: ClipboardList },
-          { id: 'fees', label: 'Fees', icon: DollarSign },
+          { id: 'fees', label: 'Fees', icon: Banknote },
         ];
       case 'teacher':
         return [
@@ -46,7 +46,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         return [
           { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
           { id: 'library', label: 'Library', icon: Library },
-          { id: 'fees', label: 'Invoices', icon: DollarSign },
+          { id: 'fees', label: 'Invoices', icon: Banknote },
           { id: 'notices', label: 'Notices', icon: Megaphone },
         ];
       default:
@@ -69,7 +69,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <button
               key={tab.id}
               onClick={() => onChangeTab(tab.id)}
-              className="relative flex flex-col items-center justify-center flex-1 py-1 px-1 cursor-pointer group focus:outline-none"
+              className="relative flex flex-col items-center justify-center flex-1 py-1 px-1 cursor-pointer group focus:outline-none active:scale-90 transition-transform duration-150"
             >
               {isActive && (
                 <motion.div
@@ -103,7 +103,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* More Menu Trigger */}
         <button
           onClick={onOpenMore}
-          className="relative flex flex-col items-center justify-center flex-1 py-1 px-1 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+          className="relative flex flex-col items-center justify-center flex-1 py-1 px-1 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors active:scale-90 transition-transform duration-150"
         >
           <div className="relative">
             <Menu className="w-5 h-5" />

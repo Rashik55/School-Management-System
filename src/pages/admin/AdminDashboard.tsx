@@ -6,7 +6,7 @@ import { TimetableGrid } from '../../components/TimetableGrid';
 import { ProfileSettings } from '../../components/ProfileSettings';
 import { LibraryView } from '../../components/LibraryView';
 import { 
-  Users, GraduationCap, ClipboardList, DollarSign, Award, Plus, Trash2, Edit3, 
+  Users, GraduationCap, ClipboardList, Banknote, Award, Plus, Trash2, Edit3, 
   Search, Filter, CheckCircle, AlertTriangle, XCircle, FileText, ChevronRight, BookOpen
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
@@ -359,7 +359,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onUpdateUs
         <>
           {/* Metrics Panel */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md transition-shadow duration-300">
+            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md active:scale-[0.98] transition-all duration-150 cursor-pointer">
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Total Students</span>
                 <p className="text-3xl font-extrabold text-gray-900 dark:text-white leading-none">{students.length}</p>
@@ -370,7 +370,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onUpdateUs
               </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md transition-shadow duration-300">
+            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md active:scale-[0.98] transition-all duration-150 cursor-pointer">
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Faculty Members</span>
                 <p className="text-3xl font-extrabold text-gray-900 dark:text-white leading-none">{teachers.length}</p>
@@ -381,7 +381,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onUpdateUs
               </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md transition-shadow duration-300">
+            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md active:scale-[0.98] transition-all duration-150 cursor-pointer">
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Pending Invoices</span>
                 <p className="text-3xl font-extrabold text-gray-900 dark:text-white leading-none">
@@ -390,11 +390,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onUpdateUs
                 <span className="text-[10px] text-amber-500 font-semibold block">Awaiting Payments</span>
               </div>
               <div className="p-4 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 rounded-2xl shrink-0">
-                <DollarSign className="w-6 h-6" />
+                <Banknote className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md transition-shadow duration-300">
+            <div className="p-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-center justify-between shadow-xs hover:shadow-md active:scale-[0.98] transition-all duration-150 cursor-pointer">
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Average Grades</span>
                 <p className="text-3xl font-extrabold text-gray-900 dark:text-white leading-none">A</p>
@@ -406,60 +406,99 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onUpdateUs
             </div>
           </div>
 
-          {/* Graphical Representation (SVG) & Notice board split */}
+          {/* Graphical Representation (SVG/Bar) & Notice board split */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-            <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 shadow-xs">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5 text-base flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-indigo-500" /> Academic Statistics
-              </h4>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">Distribution ratios of students by Class grade and Fee collection statuses.</p>
-              
-              {/* Custom SVG Distribution Chart */}
-              <div className="h-64 flex flex-col justify-between">
-                <div className="flex items-end justify-around h-48 border-b border-gray-100 dark:border-gray-800/80 pb-3">
-                  {/* Class 10 */}
-                  <div className="flex flex-col items-center w-16 group">
-                    <div className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
-                      {students.filter(s => s.classId === 'Class 10').length}
-                    </div>
-                    <div 
-                      style={{ height: `${Math.max(15, (students.filter(s => s.classId === 'Class 10').length / (students.length || 1)) * 140)}px` }}
-                      className="w-10 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 rounded-t-lg transition-all duration-500 shadow-md shadow-indigo-600/10"
-                    ></div>
-                    <span className="text-[10px] font-semibold text-gray-500 mt-2">Class 10</span>
-                  </div>
-
-                  {/* Class 11 */}
-                  <div className="flex flex-col items-center w-16 group">
-                    <div className="text-[10px] font-bold text-teal-600 dark:text-teal-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
-                      {students.filter(s => s.classId === 'Class 11').length}
-                    </div>
-                    <div 
-                      style={{ height: `${Math.max(15, (students.filter(s => s.classId === 'Class 11').length / (students.length || 1)) * 140)}px` }}
-                      className="w-10 bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 rounded-t-lg transition-all duration-500 shadow-md shadow-teal-600/10"
-                    ></div>
-                    <span className="text-[10px] font-semibold text-gray-500 mt-2">Class 11</span>
-                  </div>
-
-                  {/* Class 12 */}
-                  <div className="flex flex-col items-center w-16 group">
-                    <div className="text-[10px] font-bold text-purple-600 dark:text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
-                      {students.filter(s => s.classId === 'Class 12').length}
-                    </div>
-                    <div 
-                      style={{ height: `${Math.max(15, (students.filter(s => s.classId === 'Class 12').length / (students.length || 1)) * 140)}px` }}
-                      className="w-10 bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 rounded-t-lg transition-all duration-500 shadow-md shadow-purple-600/10"
-                    ></div>
-                    <span className="text-[10px] font-semibold text-gray-500 mt-2">Class 12</span>
-                  </div>
+            <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
+                  <h4 className="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-indigo-500" /> Academic Statistics (Class 1 - 12)
+                  </h4>
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-lg self-start sm:self-auto">
+                    Total: {students.length} Enrolled
+                  </span>
                 </div>
-
-                <div className="flex items-center justify-around text-xs text-gray-400 dark:text-gray-500 mt-1 font-medium">
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-indigo-600 rounded-xs inline-block"></span> Class 10</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-teal-600 rounded-xs inline-block"></span> Class 11</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-purple-600 rounded-xs inline-block"></span> Class 12</span>
-                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">Student distribution across all primary, lower secondary, and higher secondary grades (Class 1 to 12).</p>
               </div>
+
+              {/* 12-Class Bar Chart */}
+              {(() => {
+                const classList = Array.from({ length: 12 }, (_, i) => `Class ${i + 1}`);
+                const classCounts = classList.map(cls => ({
+                  name: cls,
+                  num: cls.replace('Class ', ''),
+                  count: students.filter(s => s.classId === cls).length
+                }));
+                const maxCount = Math.max(...classCounts.map(c => c.count), 1);
+
+                return (
+                  <div className="space-y-4">
+                    <div className="h-52 flex items-end justify-between gap-1 sm:gap-2 border-b border-gray-100 dark:border-gray-800/80 pb-3 px-1">
+                      {classCounts.map((item, idx) => {
+                        const isPrimary = idx < 5; // 1-5
+                        const isLowerSec = idx >= 5 && idx < 8; // 6-8
+                        const isSec = idx >= 8 && idx < 10; // 9-10
+
+                        const barColorClass = isPrimary 
+                          ? 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-500' 
+                          : isLowerSec 
+                          ? 'bg-teal-500 hover:bg-teal-600 dark:bg-teal-500' 
+                          : isSec 
+                          ? 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500' 
+                          : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-500';
+
+                        const barHeight = Math.max(14, Math.round((item.count / maxCount) * 140));
+
+                        return (
+                          <div key={item.name} className="flex-1 flex flex-col items-center group cursor-pointer active:scale-90 transition-transform duration-150">
+                            {/* Hover Badge / Count tag */}
+                            <div className="text-[10px] font-extrabold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-xs opacity-0 group-hover:opacity-100 transition-opacity mb-1 shadow-2xs whitespace-nowrap">
+                              {item.count} std
+                            </div>
+
+                            <div className="w-full flex justify-center items-end" style={{ height: '140px' }}>
+                              <div
+                                style={{ height: `${barHeight}px` }}
+                                className={`w-full max-w-[28px] ${barColorClass} rounded-t-md transition-all duration-500 shadow-xs relative group-hover:brightness-110`}
+                              >
+                                {item.count > 0 && (
+                                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] font-bold text-gray-600 dark:text-gray-300 group-hover:hidden">
+                                    {item.count}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <span className="text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 mt-2">
+                              C{item.num}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Tier Legends */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400 pt-1">
+                      <div className="flex items-center gap-1.5 bg-blue-50/50 dark:bg-blue-950/20 p-1.5 rounded-lg border border-blue-100/50 dark:border-blue-900/30">
+                        <span className="w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0"></span>
+                        <span className="truncate">Class 1-5 ({students.filter(s => [1,2,3,4,5].includes(parseInt(s.classId.replace('Class ','')))).length})</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-teal-50/50 dark:bg-teal-950/20 p-1.5 rounded-lg border border-teal-100/50 dark:border-teal-900/30">
+                        <span className="w-2.5 h-2.5 bg-teal-500 rounded-full shrink-0"></span>
+                        <span className="truncate">Class 6-8 ({students.filter(s => [6,7,8].includes(parseInt(s.classId.replace('Class ','')))).length})</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-indigo-50/50 dark:bg-indigo-950/20 p-1.5 rounded-lg border border-indigo-100/50 dark:border-indigo-900/30">
+                        <span className="w-2.5 h-2.5 bg-indigo-600 rounded-full shrink-0"></span>
+                        <span className="truncate">Class 9-10 ({students.filter(s => [9,10].includes(parseInt(s.classId.replace('Class ','')))).length})</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-purple-50/50 dark:bg-purple-950/20 p-1.5 rounded-lg border border-purple-100/50 dark:border-purple-900/30">
+                        <span className="w-2.5 h-2.5 bg-purple-600 rounded-full shrink-0"></span>
+                        <span className="truncate">Class 11-12 ({students.filter(s => [11,12].includes(parseInt(s.classId.replace('Class ','')))).length})</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="lg:col-span-5 space-y-6">

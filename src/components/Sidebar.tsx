@@ -6,7 +6,7 @@ import {
   ClipboardList, 
   Megaphone, 
   Calendar, 
-  DollarSign, 
+  Banknote, 
   Award, 
   BookOpen, 
   Settings, 
@@ -42,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'attendance', label: 'Attendance', icon: ClipboardList },
     { id: 'notices', label: 'Notices', icon: Megaphone },
     { id: 'timetable', label: 'Timetable', icon: Calendar },
-    { id: 'fees', label: 'Fee Invoices', icon: DollarSign },
+    { id: 'fees', label: 'Fee Invoices', icon: Banknote },
     { id: 'results', label: 'Results', icon: Award },
     { id: 'settings', label: 'Profile Settings', icon: Settings },
   ];
@@ -66,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'results', label: 'Exam Grades', icon: Award },
     { id: 'notices', label: 'School Notices', icon: Megaphone },
     { id: 'timetable', label: 'Schedule', icon: Calendar },
-    { id: 'fees', label: 'Fee Portal', icon: DollarSign },
+    { id: 'fees', label: 'Fee Portal', icon: Banknote },
     { id: 'settings', label: 'Profile Settings', icon: Settings },
   ];
 
@@ -149,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onChangeTab(item.id);
                   onClose(); // auto close on mobile menu tap
                 }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group relative cursor-pointer ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 active:scale-95 active:opacity-90 group relative cursor-pointer ${
                   isSelected 
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/25 font-semibold' 
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/70'

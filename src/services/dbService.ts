@@ -1015,8 +1015,6 @@ export const dbService = {
           return newProfile;
         }
       } catch (err: any) {
-        console.warn("Firebase sign-in failed, checking demo/local profiles fallback:", err?.message || err);
-
         // Fallback for pre-loaded demo profiles and locally saved profiles
         const profiles = JSON.parse(localStorage.getItem('sms_profiles') || '[]') as UserProfile[];
         const localUser = profiles.find(p => p.email.toLowerCase() === cleanEmail);
@@ -1028,7 +1026,7 @@ export const dbService = {
           );
 
           if (password === expectedPass || password === 'admin123' || password === 'teacher123' || password === 'student123') {
-            // Attempt to register account on Firebase Auth in background so Firebase Auth is synchronized
+            // Attempt to register account on Firebase Auth so Firebase Auth is synchronized
             try {
               const newCred = await createUserWithEmailAndPassword(fireAuth, cleanEmail, password);
               const newUid = newCred.user.uid;
@@ -1037,12 +1035,15 @@ export const dbService = {
                 await setDoc(doc(fireDb, 'profiles', newUid), dbProfile);
                 await setDoc(doc(fireDb, 'users', newUid), dbProfile);
               } catch (e) {
-                console.warn("Could not write profile to Firestore:", e);
+                // Ignore silent firestore write warning
               }
               localStorage.setItem('sms_active_user', JSON.stringify(dbProfile));
               return dbProfile;
-            } catch (autoErr) {
-              console.warn("Auto Firebase user registration skipped or failed:", autoErr);
+            } catch (autoErr: any) {
+              if (autoErr?.code === 'auth/email-already-in-use') {
+                // User exists in Firebase Auth, sign-in failed earlier because of invalid password
+                throw new Error("Invalid password. Please check your password and try again.");
+              }
               localStorage.setItem('sms_active_user', JSON.stringify(localUser));
               return localUser;
             }
