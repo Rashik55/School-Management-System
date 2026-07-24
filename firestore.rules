@@ -2,105 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
-    function incoming() {
-      return request.resource.data;
-    }
-
-    function existing() {
-      return resource.data;
-    }
-
-    // Default deny catch-all
+    // Allow read and write for all collections in the school management database
     match /{document=**} {
-      allow read, write: if false;
-    }
-
-    // User profiles
-    match /users/{userId} {
-      allow read: if isSignedIn();
-      allow create, update: if isSignedIn() && (request.auth.uid == userId || true);
-      allow delete: if isSignedIn();
-    }
-
-    // Students collection
-    match /students/{studentId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Teachers collection
-    match /teachers/{teacherId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Attendance
-    match /attendance/{attendanceId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Exam Results
-    match /results/{resultId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Assignments
-    match /assignments/{assignmentId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Submissions
-    match /submissions/{submissionId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Notices
-    match /notices/{noticeId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // System Notifications
-    match /notifications/{notificationId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Timetable
-    match /timetable/{timetableId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Fees
-    match /fees/{feeId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Library Books
-    match /books/{bookId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Book Loans
-    match /loans/{loanId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
+      allow read, write: if true;
     }
   }
 }
+
