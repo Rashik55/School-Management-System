@@ -570,21 +570,163 @@ const INITIAL_NOTIFICATIONS: SystemNotification[] = [
   }
 ];
 
-const INITIAL_TIMETABLE: TimetablePeriod[] = [
-  // Class 10 Timetable
-  { id: 't-1', day: 'Monday', period: 1, time: '08:30 AM - 09:15 AM', subject: 'Mathematics', classId: 'Class 10', teacherName: 'Hari Shrestha', room: 'Room 201' },
-  { id: 't-2', day: 'Monday', period: 2, time: '09:15 AM - 10:00 AM', subject: 'Physics', classId: 'Class 10', teacherName: 'Prakash Shrestha', room: 'Science Lab' },
-  { id: 't-3', day: 'Monday', period: 3, time: '10:15 AM - 11:00 AM', subject: 'English', classId: 'Class 10', teacherName: 'Sabina Shrestha', room: 'Room 201' },
-  { id: 't-4', day: 'Monday', period: 4, time: '11:00 AM - 11:45 AM', subject: 'Computer Science', classId: 'Class 10', teacherName: 'Deepak Bhele', room: 'Computer Lab' },
-  
-  { id: 't-5', day: 'Tuesday', period: 1, time: '08:30 AM - 09:15 AM', subject: 'English', classId: 'Class 10', teacherName: 'Sabina Shrestha', room: 'Room 201' },
-  { id: 't-6', day: 'Tuesday', period: 2, time: '09:15 AM - 10:00 AM', subject: 'Mathematics', classId: 'Class 10', teacherName: 'Hari Shrestha', room: 'Room 201' },
-  { id: 't-7', day: 'Tuesday', period: 3, time: '10:15 AM - 11:00 AM', subject: 'Physics', classId: 'Class 10', teacherName: 'Prakash Shrestha', room: 'Science Lab' },
-  
-  { id: 't-8', day: 'Wednesday', period: 1, time: '08:30 AM - 09:15 AM', subject: 'Mathematics', classId: 'Class 10', teacherName: 'Hari Shrestha', room: 'Room 201' },
-  { id: 't-9', day: 'Wednesday', period: 2, time: '09:15 AM - 10:00 AM', subject: 'Computer Science', classId: 'Class 10', teacherName: 'Deepak Bhele', room: 'Computer Lab' },
-  { id: 't-10', day: 'Wednesday', period: 3, time: '10:15 AM - 11:00 AM', subject: 'English', classId: 'Class 10', teacherName: 'Sabina Shrestha', room: 'Room 201' }
-];
+const generateInitialTimetable = (): TimetablePeriod[] => {
+  const days: ('Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday')[] = [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
+  ];
+
+  const timetable: TimetablePeriod[] = [];
+
+  // 1. Classes 1 to 10 (Day Shift: up to 4:00 PM, 8 periods + 30 min Lunch Break at 12:00 PM - 12:30 PM)
+  const dayTimeSlots = [
+    '09:00 AM - 09:45 AM',
+    '09:45 AM - 10:30 AM',
+    '10:30 AM - 11:15 AM',
+    '11:15 AM - 12:00 PM',
+    '12:30 PM - 01:15 PM',
+    '01:15 PM - 02:00 PM',
+    '02:00 PM - 02:45 PM',
+    '02:45 PM - 03:30 PM'
+  ];
+
+  const class10Subjects = ['Mathematics', 'Science & Technology', 'Compulsory Nepali', 'English', 'Social Studies', 'Health & Physical Ed', 'Computer Science', 'Optional Mathematics'];
+  const teachers10 = ['Hari Shrestha', 'Prakash Shrestha', 'Suman Bhele', 'Sabina Shrestha', 'Anita Bhele', 'Maya Bhele', 'Deepak Bhele', 'Hari Shrestha'];
+  const rooms10 = ['Room 201', 'Science Lab', 'Room 201', 'Room 201', 'Room 201', 'Playground', 'Computer Lab', 'Room 201'];
+
+  for (const day of days) {
+    for (let p = 1; p <= 8; p++) {
+      const subIdx = (p - 1 + days.indexOf(day)) % class10Subjects.length;
+      timetable.push({
+        id: `t-day-10-${day}-${p}`,
+        day,
+        period: p,
+        time: dayTimeSlots[p - 1],
+        subject: class10Subjects[subIdx],
+        classId: 'Class 10',
+        shift: 'day',
+        teacherName: teachers10[subIdx],
+        room: rooms10[subIdx]
+      });
+
+      timetable.push({
+        id: `t-day-9-${day}-${p}`,
+        day,
+        period: p,
+        time: dayTimeSlots[p - 1],
+        subject: class10Subjects[(subIdx + 2) % class10Subjects.length],
+        classId: 'Class 9',
+        shift: 'day',
+        teacherName: teachers10[(subIdx + 2) % teachers10.length],
+        room: 'Room 109'
+      });
+      
+      for (let c = 1; c <= 8; c++) {
+        if (p <= 6) {
+          timetable.push({
+            id: `t-day-${c}-${day}-${p}`,
+            day,
+            period: p,
+            time: dayTimeSlots[p - 1],
+            subject: ['Nepali', 'English', 'Mathematics', 'Science', 'Social Studies', 'Local Subject'][p - 1],
+            classId: `Class ${c}`,
+            shift: 'day',
+            teacherName: teachers10[p % teachers10.length],
+            room: `Room ${100 + c}`
+          });
+        }
+      }
+    }
+  }
+
+  // 2. Class 11 & 12 (Morning Shift: 06:40 AM to 11:00 AM, 6 periods + 30 min Break at 08:30 AM - 09:00 AM)
+  const morningTimeSlots = [
+    '06:40 AM - 07:15 AM',
+    '07:15 AM - 07:50 AM',
+    '07:50 AM - 08:30 AM',
+    '09:00 AM - 09:40 AM',
+    '09:40 AM - 10:20 AM',
+    '10:20 AM - 11:00 AM'
+  ];
+
+  const morningSubjects11 = ['Compulsory English', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'Nepali'];
+  const morningTeachers11 = ['Sabina Shrestha', 'Prakash Shrestha', 'Maya Bhele', 'Hari Shrestha', 'Ramesh Bhele', 'Suman Bhele'];
+
+  for (const day of days) {
+    for (let p = 1; p <= 6; p++) {
+      const idx11 = (p - 1 + days.indexOf(day)) % morningSubjects11.length;
+      timetable.push({
+        id: `t-morn-11-${day}-${p}`,
+        day,
+        period: p,
+        time: morningTimeSlots[p - 1],
+        subject: morningSubjects11[idx11],
+        classId: 'Class 11',
+        shift: 'morning',
+        teacherName: morningTeachers11[idx11],
+        room: 'Hall A (Morning)'
+      });
+
+      timetable.push({
+        id: `t-morn-12-${day}-${p}`,
+        day,
+        period: p,
+        time: morningTimeSlots[p - 1],
+        subject: morningSubjects11[(idx11 + 1) % morningSubjects11.length],
+        classId: 'Class 12',
+        shift: 'morning',
+        teacherName: morningTeachers11[(idx11 + 1) % morningTeachers11.length],
+        room: 'Hall B (Morning)'
+      });
+    }
+  }
+
+  // 3. Class 11 & 12 (Evening Shift: 11:00 AM to 04:30 PM, 7 periods + 30 min Break at 01:15 PM - 01:45 PM)
+  const eveningTimeSlots = [
+    '11:00 AM - 11:45 AM',
+    '11:45 AM - 12:30 PM',
+    '12:30 PM - 01:15 PM',
+    '01:45 PM - 02:30 PM',
+    '02:30 PM - 03:15 PM',
+    '03:15 PM - 04:00 PM',
+    '04:00 PM - 04:30 PM'
+  ];
+
+  const eveningSubjects11 = ['Accountancy', 'Economics', 'Business Studies', 'Computer Science', 'Social Studies', 'Compulsory English', 'Mathematics'];
+  const eveningTeachers11 = ['Anita Bhele', 'Hari Shrestha', 'Prakash Shrestha', 'Deepak Bhele', 'Sabina Shrestha', 'Suman Bhele', 'Maya Bhele'];
+
+  for (const day of days) {
+    for (let p = 1; p <= 7; p++) {
+      const idx11e = (p - 1 + days.indexOf(day)) % eveningSubjects11.length;
+      timetable.push({
+        id: `t-eve-11-${day}-${p}`,
+        day,
+        period: p,
+        time: eveningTimeSlots[p - 1],
+        subject: eveningSubjects11[idx11e],
+        classId: 'Class 11',
+        shift: 'evening',
+        teacherName: eveningTeachers11[idx11e],
+        room: 'Room 301 (Evening)'
+      });
+
+      timetable.push({
+        id: `t-eve-12-${day}-${p}`,
+        day,
+        period: p,
+        time: eveningTimeSlots[p - 1],
+        subject: eveningSubjects11[(idx11e + 2) % eveningSubjects11.length],
+        classId: 'Class 12',
+        shift: 'evening',
+        teacherName: eveningTeachers11[(idx11e + 2) % eveningTeachers11.length],
+        room: 'Room 302 (Evening)'
+      });
+    }
+  }
+
+  return timetable;
+};
+
+const INITIAL_TIMETABLE: TimetablePeriod[] = generateInitialTimetable();
 
 const INITIAL_ASSIGNMENTS: Assignment[] = [
   {
@@ -725,7 +867,7 @@ const INITIAL_LOANS: BookLoan[] = [
   }
 ];
 
-// Helper to initialize local storage data if not present or force update to version 4
+// Helper to initialize local storage data if not present or force update to version 5
 const initializeLocalStorage = () => {
   const version = localStorage.getItem('sms_v4_nepal_names');
   if (!version) {
@@ -743,6 +885,12 @@ const initializeLocalStorage = () => {
     localStorage.setItem('sms_books', JSON.stringify(INITIAL_BOOKS));
     localStorage.setItem('sms_loans', JSON.stringify(INITIAL_LOANS));
     localStorage.setItem('sms_v4_nepal_names', 'true');
+  }
+
+  const v5Shift = localStorage.getItem('sms_v5_timetable_shifts');
+  if (!v5Shift) {
+    localStorage.setItem('sms_timetable', JSON.stringify(INITIAL_TIMETABLE));
+    localStorage.setItem('sms_v5_timetable_shifts', 'true');
   }
 
   if (!localStorage.getItem('sms_passwords')) {

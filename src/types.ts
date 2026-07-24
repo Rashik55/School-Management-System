@@ -122,6 +122,7 @@ export interface TimetablePeriod {
   time: string; // "09:00 AM - 09:45 AM"
   subject: string;
   classId: string;
+  shift?: 'day' | 'morning' | 'evening';
   teacherName: string;
   room: string;
 }
