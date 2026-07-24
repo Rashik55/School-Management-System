@@ -73,6 +73,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, onUpdateUs
           user={user} 
           onLogout={onLogout} 
           onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          onUpdateUser={onUpdateUser}
         />
 
         {/* Dynamic page sub-views scroll area (pb-24 on mobile so bottom bar never obscures content) */}

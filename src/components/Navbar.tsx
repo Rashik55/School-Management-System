@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from './ThemeContext';
-import { LogOut, Sun, Moon, Bell, Menu, GraduationCap, Megaphone, Banknote, Award, User, Trash2, Check } from 'lucide-react';
+import { LogOut, Sun, Moon, Bell, Menu, GraduationCap, Megaphone, Banknote, Award, User, Trash2, Check, Camera } from 'lucide-react';
 import { UserProfile, SystemNotification } from '../types';
 import { dbService } from '../services/dbService';
 import { Modal } from './Modal';
+import { ProfileAvatarModal } from './ProfileAvatarModal';
 
 interface NavbarProps {
   user: UserProfile;
   onLogout: () => void;
   onToggleMobileSidebar: () => void;
+  onUpdateUser?: (updated: UserProfile) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onToggleMobileSidebar }) => {
+export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onToggleMobileSidebar, onUpdateUser }) => {
   const { theme, toggleTheme } = useTheme();
   const [notifications, setNotifications] = useState<SystemNotification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<SystemNotification | null>(null);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -260,9 +263,28 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onToggleMobileSi
             </span>
           </div>
 
-          <div className="w-9 h-9 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold text-sm flex items-center justify-center select-none shadow-xs border border-blue-100 dark:border-blue-900/50">
-            {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-          </div>
+          {/* Clickable Profile Avatar Button */}
+          <button
+            type="button"
+            onClick={() => setIsAvatarModalOpen(true)}
+            title="Update Profile Picture"
+            className="relative group cursor-pointer focus:outline-hidden"
+          >
+            <div className="w-9 h-9 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold text-sm flex items-center justify-center select-none shadow-xs border border-blue-100 dark:border-blue-900/50 overflow-hidden group-hover:ring-2 group-hover:ring-indigo-500 transition-all">
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+              )}
+            </div>
+            <div className="absolute -bottom-0.5 -right-0.5 bg-indigo-600 text-white rounded-full p-0.5 shadow-xs opacity-80 group-hover:opacity-100 transition-opacity">
+              <Camera className="w-2.5 h-2.5" />
+            </div>
+          </button>
 
           {/* Quick Logout */}
           <button
@@ -274,6 +296,16 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onToggleMobileSi
           </button>
         </div>
       </div>
+
+      {/* Profile Avatar Modal */}
+      <ProfileAvatarModal
+        isOpen={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        user={user}
+        onUpdate={(updated) => {
+          if (onUpdateUser) onUpdateUser(updated);
+        }}
+      />
 
       {/* Notification Detail Modal */}
       {selectedNotification && (

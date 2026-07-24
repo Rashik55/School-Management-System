@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { dbService } from '../services/dbService';
 import { UserProfile } from '../types';
-import { Save, User, Mail, Phone, MapPin, Calendar, Key, AlertCircle } from 'lucide-react';
+import { Save, User, Mail, Phone, MapPin, Calendar, Key, AlertCircle, Camera } from 'lucide-react';
+import { ProfileAvatarModal } from './ProfileAvatarModal';
 
 interface ProfileSettingsProps {
   user: UserProfile;
@@ -15,6 +16,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate
   const [updating, setUpdating] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,16 +42,64 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate
     }
   };
 
+  const userInitials = user.name
+    ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+    : 'U';
+
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 md:p-8 shadow-xs">
-        <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-gray-150 dark:border-gray-800">
-          <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl">
-            <User className="w-5 h-5" />
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-150 dark:border-gray-800">
+          <div className="flex items-center space-x-3">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl">
+              <User className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Details</h3>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Update personal information & avatar</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Details</h3>
-            <p className="text-xs text-gray-400 dark:text-gray-500">Update personal information</p>
+        </div>
+
+        {/* Profile Avatar Banner / Camera Trigger */}
+        <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative group shrink-0">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500/30 shadow-xs bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-black text-xl">
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>{userInitials}</span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsAvatarModalOpen(true)}
+              title="Change Profile Picture"
+              className="absolute -bottom-1 -right-1 p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-md transition-all active:scale-90 cursor-pointer"
+            >
+              <Camera className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="text-center sm:text-left space-y-1">
+            <div className="flex items-center gap-2 justify-center sm:justify-start">
+              <h4 className="font-bold text-gray-900 dark:text-white text-base">{user.name}</h4>
+              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-md">
+                {user.role}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 dark:text-gray-500">{user.email}</p>
+            <button
+              type="button"
+              onClick={() => setIsAvatarModalOpen(true)}
+              className="inline-flex items-center gap-1.5 mt-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+            >
+              <Camera className="w-3.5 h-3.5" /> Update Profile Picture (Camera / Upload)
+            </button>
           </div>
         </div>
 
@@ -198,6 +248,13 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate
           </div>
         </form>
       </div>
+
+      <ProfileAvatarModal
+        isOpen={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        user={user}
+        onUpdate={onUpdate}
+      />
     </div>
   );
 };

@@ -1271,18 +1271,62 @@ export const dbService = {
     if (isConfigured) {
       try {
         const ref = doc(fireDb, 'profiles', uid);
-        await updateDoc(ref, updatedFields);
-        const updatedSnap = await getDoc(ref);
-        const fullProfile = updatedSnap.data() as UserProfile;
-        
-        // Sync local storage active session
-        const active = this.getCurrentUser();
-        if (active && active.uid === uid) {
-          localStorage.setItem('sms_active_user', JSON.stringify(fullProfile));
+        try {
+          await updateDoc(ref, updatedFields);
+        } catch {
+          await setDoc(ref, updatedFields, { merge: true });
         }
+        const updatedSnap = await getDoc(ref);
+        const snapData = updatedSnap.data() as UserProfile | undefined;
+        const active = this.getCurrentUser();
+        const fullProfile: UserProfile = snapData || {
+          uid,
+          email: active?.email || '',
+          name: active?.name || '',
+          role: active?.role || 'student',
+          createdAt: active?.createdAt || new Date().toISOString().split('T')[0],
+          ...active,
+          ...updatedFields
+        };
+        if (active && active.uid === uid) {
+          const synced = { ...active, ...fullProfile };
+          localStorage.setItem('sms_active_user', JSON.stringify(synced));
+        }
+
+        const profiles = JSON.parse(localStorage.getItem('sms_profiles') || '[]') as UserProfile[];
+        const pIdx = profiles.findIndex(p => p.uid === uid);
+        if (pIdx !== -1) {
+          profiles[pIdx] = { ...profiles[pIdx], ...fullProfile };
+          localStorage.setItem('sms_profiles', JSON.stringify(profiles));
+        }
+
         return fullProfile;
       } catch (err: any) {
-        throw new Error(err.message || "Failed to update profile in Firestore");
+        console.warn("Firestore profile update fallback to local:", err);
+        // Fallback sync to local storage if network or permissions fail
+        const active = this.getCurrentUser();
+        const profiles = JSON.parse(localStorage.getItem('sms_profiles') || '[]') as UserProfile[];
+        const pIdx = profiles.findIndex(p => p.uid === uid);
+        let updatedUser: UserProfile = {
+          uid,
+          email: active?.email || '',
+          name: active?.name || '',
+          role: active?.role || 'student',
+          createdAt: active?.createdAt || new Date().toISOString().split('T')[0],
+          ...active,
+          ...updatedFields
+        };
+
+        if (pIdx !== -1) {
+          profiles[pIdx] = { ...profiles[pIdx], ...updatedFields };
+          localStorage.setItem('sms_profiles', JSON.stringify(profiles));
+          updatedUser = profiles[pIdx];
+        }
+
+        if (active && active.uid === uid) {
+          localStorage.setItem('sms_active_user', JSON.stringify(updatedUser));
+        }
+        return updatedUser;
       }
     } else {
       return new Promise((resolve) => {
@@ -1299,7 +1343,10 @@ export const dbService = {
           }
           resolve(profiles[idx]);
         } else {
-          resolve({ uid, email: '', name: '', role: 'student', createdAt: '', ...updatedFields } as UserProfile);
+          const active = this.getCurrentUser();
+          const synced = { ...active, ...updatedFields } as UserProfile;
+          localStorage.setItem('sms_active_user', JSON.stringify(synced));
+          resolve(synced);
         }
       });
     }

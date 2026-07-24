@@ -1,6 +1,8 @@
 {
   "name": "School Management System",
   "description": "A comprehensive School Management System supporting Admin, Teacher, and Student roles with dashboards, attendance, assignments, and grade books.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": [
+    "camera"
+  ],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
