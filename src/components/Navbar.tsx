@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from './ThemeContext';
 import { LogOut, Sun, Moon, Bell, Menu, GraduationCap, Megaphone, Banknote, Award, User, Trash2, Check, Camera } from 'lucide-react';
 import { UserProfile, SystemNotification } from '../types';
@@ -20,21 +20,16 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onToggleMobileSi
   const [selectedNotification, setSelectedNotification] = useState<SystemNotification | null>(null);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const data = await dbService.getNotifications(user.role);
-      setNotifications(data);
-    } catch (err) {
-      console.error("Failed to load notifications:", err);
-    }
-  }, [user.role]);
-
   useEffect(() => {
-    fetchNotifications();
-    // Poll every 8 seconds for new notifications
-    const interval = setInterval(fetchNotifications, 8000);
-    return () => clearInterval(interval);
-  }, [fetchNotifications]);
+    // Subscribe to real-time Firestore updates
+    const unsubscribe = dbService.subscribeToNotifications(user.role, (data) => {
+      setNotifications(data);
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [user.role]);
 
   const handleMarkAsRead = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();

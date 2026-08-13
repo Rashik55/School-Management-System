@@ -19,7 +19,8 @@ import {
   updateDoc, 
   deleteDoc, 
   query, 
-  where 
+  where,
+  onSnapshot
 } from 'firebase/firestore';
 import { 
   UserProfile, 
@@ -1646,7 +1647,13 @@ export const dbService = {
     if (isConfigured) {
       try {
         const snap = await getDocs(collection(fireDb, 'notifications'));
-        const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as SystemNotification));
+        let all = snap.docs.map(d => ({ id: d.id, ...d.data() } as SystemNotification));
+        if (all.length === 0) {
+          for (const notif of INITIAL_NOTIFICATIONS) {
+            await setDoc(doc(fireDb, 'notifications', notif.id), notif);
+          }
+          all = INITIAL_NOTIFICATIONS;
+        }
         return all
           .filter(n => n.role === 'all' || n.role === role)
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -1657,6 +1664,41 @@ export const dbService = {
     
     const list = JSON.parse(localStorage.getItem('sms_notifications') || '[]') as SystemNotification[];
     return list.filter(n => n.role === 'all' || n.role === role);
+  },
+
+  subscribeToNotifications(role: UserRole, callback: (notifications: SystemNotification[]) => void): () => void {
+    if (isConfigured) {
+      try {
+        const q = query(collection(fireDb, 'notifications'));
+        const unsubscribe = onSnapshot(q, async (snap) => {
+          let all = snap.docs.map(d => ({ id: d.id, ...d.data() } as SystemNotification));
+          if (all.length === 0) {
+            for (const notif of INITIAL_NOTIFICATIONS) {
+              await setDoc(doc(fireDb, 'notifications', notif.id), notif);
+            }
+            all = INITIAL_NOTIFICATIONS;
+          }
+          const filtered = all
+            .filter(n => n.role === 'all' || n.role === role)
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          callback(filtered);
+        }, (err) => {
+          console.warn("Real-time notifications subscription error:", err);
+          this.getNotifications(role).then(callback);
+        });
+        return unsubscribe;
+      } catch (err) {
+        console.warn("Failed to subscribe to Firestore notifications:", err);
+      }
+    }
+
+    // Fallback to initial local storage fetch & storage event listener
+    this.getNotifications(role).then(callback);
+    const handleStorage = () => {
+      this.getNotifications(role).then(callback);
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   },
 
   async addNotification(notif: Omit<SystemNotification, 'id' | 'createdAt' | 'read' | 'timeAgo'>): Promise<SystemNotification> {
@@ -1858,6 +1900,15 @@ export const dbService = {
   async addAssignment(assignment: Omit<Assignment, 'id'>): Promise<Assignment> {
     const id = 'assign-' + Math.random().toString(36).substr(2, 9);
     const fullAssignment = { id, ...assignment, submissionsCount: 0 };
+    
+    // Trigger real-time notification for student alert
+    await this.addNotification({
+      title: `New Assignment: ${assignment.title}`,
+      content: `${assignment.subject} (${assignment.classId}) due on ${assignment.dueDate}. Details: ${assignment.description ? assignment.description.substring(0, 100) : ''}`,
+      type: 'notice',
+      role: 'student'
+    });
+
     if (isConfigured) {
       try {
         await setDoc(doc(fireDb, 'assignments', id), fullAssignment);
@@ -1931,6 +1982,21 @@ export const dbService = {
   },
 
   async gradeSubmission(submissionId: string, grade: string, remarks: string): Promise<Submission> {
+    try {
+      const submissions = await this.getSubmissions();
+      const sub = submissions.find(s => s.id === submissionId);
+      if (sub) {
+        await this.addNotification({
+          title: `Assignment Graded: ${sub.assignmentTitle || 'Submission'}`,
+          content: `Your submission for ${sub.assignmentTitle || 'assignment'} was graded: Grade '${grade}'. ${remarks ? 'Remarks: ' + remarks : ''}`,
+          type: 'grade',
+          role: 'student'
+        });
+      }
+    } catch (err) {
+      console.warn("gradeSubmission notification dispatch failed:", err);
+    }
+
     if (isConfigured) {
       const ref = doc(fireDb, 'submissions', submissionId);
       await updateDoc(ref, { grade, remarks, status: 'graded' });
@@ -2142,6 +2208,15 @@ export const dbService = {
   async addResult(result: Omit<ExamResult, 'id'>): Promise<ExamResult> {
     const id = 'res-' + Math.random().toString(36).substr(2, 9);
     const fullResult = { id, ...result };
+
+    // Trigger real-time grade posted notification
+    await this.addNotification({
+      title: `Grade Posted: ${result.subject} (${result.examName})`,
+      content: `Grade '${result.grade}' (${result.marksObtained}/${result.maxMarks}) posted for ${result.studentName}. ${result.remarks ? 'Remarks: ' + result.remarks : ''}`,
+      type: 'grade',
+      role: 'student'
+    });
+
     if (isConfigured) {
       try {
         await setDoc(doc(fireDb, 'results', id), fullResult);
